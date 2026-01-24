@@ -174,3 +174,11 @@ jobs:
           Target: ${{ github.event.inputs.BUILD_TARGET }}.img
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Upload recovery image
+  if: always()
+  uses: actions/upload-artifact@v3
+  with:
+    name: recovery
+    path: out/target/product/a5/recovery.img
+    
