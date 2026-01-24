@@ -172,10 +172,20 @@ jobs:
           Manifest: ${{ github.event.inputs.MANIFEST_BRANCH }}
           Device: ${{ github.event.inputs.DEVICE_NAME }}
           Target: ${{ github.event.inputs.BUILD_TARGET }}.img
-    
-  - uses: actions/upload-artifact@v4
-  if: ${{ always() }}
-  with:
-    name: build
-    path: dist/
+
+         - name: Building recovery
+      run: |
+        source build/envsetup.sh
+        export ALLOW_MISSING_DEPENDENCIES=true
+        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      if: ${{ always() }}
+      with:
+        name: build
+        path: device/xiaomi/a5/prebuilt
+
+
 
